@@ -205,15 +205,13 @@ Go to ```myapp/settings.py``` and configure static files.
 
 ```
 
-# The STATIC_URL path changes depending on where you have kept.
-# I have created separate folder named static and placed in the same folder as at where crud_app, todo, manage.py are placed.
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 
-# Same scenario for STATIC_ROOT like STATIC_URL
+
 STATIC_ROOT = "/static/"
 
 ```

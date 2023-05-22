@@ -947,6 +947,9 @@ def home(request):
 
 ```
 
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render, redirect
+
 def update_todo(request, pk):
     todo = get_object_or_404(TodoItem, id=pk, user=request.user)
 

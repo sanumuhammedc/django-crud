@@ -926,20 +926,16 @@ Inside ```todo/views.py``` add home function which render user's todo list
 ```
 
 from django.contrib.auth.decorators import login_required
+from .models import TodoItem
 
 
 @login_required
 def home(request):
-    """
-    Create todo item and view other todo items as well.
-    """
     if request.method == 'POST':
-        # "new-todo" is the name of the input in crud.html file
         todo_name = request.POST.get("new-todo")
         todo = TodoItem.objects.create(name=todo_name, user=request.user)
         return redirect("home")
 
-    # retrieveing todo items which are not completed todo items
     todos = TodoItem.objects.filter(user=request.user, is_completed=False).order_by("-id")
 
     context = {"todos": todos}
@@ -952,18 +948,10 @@ def home(request):
 ```
 
 def update_todo(request, pk):
-    """
-    Update todo item
-    Args:
-        pk (Integer): Todo ID - primary key
-    """
-    # NOTE: below get_object_or_404() returns a data if exists else status 404 not found
     todo = get_object_or_404(TodoItem, id=pk, user=request.user)
 
-    # NOTE: request.POST.get("todo_{pk}") is the input name of the todo modal
     todo.name = request.POST.get(f"todo_{pk}")
     todo.save()
-    # return redirect("home")
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     
 ```
@@ -972,12 +960,7 @@ def update_todo(request, pk):
 
 ```
 
-def delete_todo(request, pk):
-    """
-    Delete todo item
-    Args:
-        pk (Integer): Todo ID - Primary key
-    """    
+def delete_todo(request, pk):  
     todo = get_object_or_404(TodoItem, id=pk, user=request.user)
     todo.delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
@@ -992,12 +975,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render, redirect
 
 
-def complete_todo(request, pk):
-    """
-    Updating todo as completed item
-    Args:
-        pk (Integer): Todo ID - primary key
-    """    
+def complete_todo(request, pk):   
     todo = get_object_or_404(TodoItem, id=pk, user=request.user)
     todo.is_completed = True
     todo.save()
@@ -1040,9 +1018,6 @@ from django.core.paginator import Paginator
 
 @login_required
 def home(request):
-    """
-    Create todo item and view other todo items as well.
-    """
     if request.method == 'POST':
         todo_name = request.POST.get("new-todo")
         todo = TodoItem.objects.create(name=todo_name, user=request.user)

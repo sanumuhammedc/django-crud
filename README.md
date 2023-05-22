@@ -1,4 +1,6 @@
-# django-for-beginners-2
+# django-crud
+
+In this tutorial we will create a django todo app to familiarize crud operations and authentication in django if you are new to django please refer [Django for beginners](https://github.com/sanumuhammedc/django-for-beginners) before continuing with this tutorial 
 
 ## Step 1: Setting Up the Project
 

@@ -166,12 +166,7 @@ from django.shortcuts import render, redirect
 from .forms import UserRegistrationForm
 
 
-def register(request):
-    """
-    User Registration form
-    Args:
-        request (POST): New user registered
-    """    
+def register(request):   
     form = UserRegistrationForm()
     if request.method == "POST":
         form = UserRegistrationForm(request.POST)
@@ -183,7 +178,7 @@ def register(request):
 
     context = {"form": form}
     return render(request, "todo/register.html", context)
-    
+        
 ```
 
 Add code given below to ```todo/urls.py```

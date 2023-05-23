@@ -525,7 +525,7 @@ Ceate a file called ```base.html``` inside directory ```myapp/todo/templates/par
 </html>
 ```
 
-Ceate a file called ```base.html``` inside directory ```myapp/todo/templates/partials```
+Ceate a file called ```beside.html``` inside directory ```myapp/todo/templates/partials```
 
 ```
 <div style="margin-top: 5rem !important;" class="border p-3 shadow">

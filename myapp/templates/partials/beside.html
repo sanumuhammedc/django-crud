@@ -1,0 +1,26 @@
+<div style="margin-top: 5rem !important;" class="border p-3 shadow">
+    <div class="border p-3 mb-2">
+        <h3>Completed tasks</h3>
+        {% for done in dones %}
+        <div class="border p-3 mb-3">
+            <small>Created: {{ done.created }}</small><br>
+            {% if todo.deadline %}
+                <small>Deadline: {{ done.deadline }}</small>
+            {% endif %}
+            <div class="row mt-3">
+                <div class="col-md-8">
+                    {% if done.complete == True %}
+                        <s><p>{{ done.title }}</p></s>
+                    {% else %}
+                        <h5>{{ done.title }}</h5>
+                    {% endif %}
+                </div>
+                <div class="col-md-4">
+                    <a class="btn btn-info btn-sm" href="{% url 'update' done.id %}">Edit</a>
+                    <a class="btn btn-danger btn-sm" href="{% url 'delete' done.id %}">Delete</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>

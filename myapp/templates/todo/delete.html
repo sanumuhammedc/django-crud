@@ -1,0 +1,17 @@
+{% extends 'partials/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+    <div class="border p-3 m-3">
+        <h4>Delete Task</h4>
+        <div class="alert alert-danger">
+            <p>Are You Sure Want To Delete</p>
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            <a class="btn btn-secondary" href="{% url 'tasks' %}">Cancel</a>
+            <input class="btn btn-danger" type="submit" value="Confirm">
+        </form>
+    </div>
+
+{% endblock %}

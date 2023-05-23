@@ -1,0 +1,39 @@
+{% extends 'partials/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+
+    <div class="border p-3 m-3 shadow">
+        <form method="post">
+            {% csrf_token %}
+            {{ form | crispy }}
+            <input class="btn btn-success btn-block w-100 mt-2" type="submit" value="Submit">
+        </form>
+        <hr>
+        {% for todo in todos %}
+            {% if todo.deadline > now or todo.deadline is None %}
+                <div class="border p-3 mb-3">
+                <small>Created: {{ todo.created }}</small><br>
+                {% if todo.deadline %}
+                    <small>Deadline: {{ todo.deadline }}</small>
+                {% endif %}
+                <div class="row mt-3">
+                    <div class="col-md-8">
+                        {% if todo.complete == True %}
+                            <s><p>{{ todo.title }}</p></s>
+                        {% else %}
+                            <h5>{{ todo.title }}</h5>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4">
+                        <a class="btn btn-info btn-sm" href="{% url 'update' todo.id %}">Edit</a>
+                        <a class="btn btn-danger btn-sm" href="{% url 'delete' todo.id %}">Delete</a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endblock %}

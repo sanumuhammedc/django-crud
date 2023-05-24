@@ -20,7 +20,7 @@ def tasklist(request):
 
     if request.method == 'POST':
         data = {'csrfmiddlewaretoken': request.POST['csrfmiddlewaretoken'], 'title': request.POST['title'],
-                'deadline': request.POST['deadline'], 'user': request.user.username}
+                'user': request.user.username}
         query_dict = QueryDict('', mutable=True)
         query_dict.update(data)
         form = TaskForm(query_dict)

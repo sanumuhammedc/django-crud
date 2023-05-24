@@ -4,12 +4,11 @@ from .models import Task
 
 class TaskForm(forms.ModelForm):
     title = forms.CharField(label='', widget=forms.TextInput(attrs={'placeholder': 'Add Task Here...'}))
-    deadline = forms.DateTimeField(required=False, widget=forms.TextInput(attrs={'type': 'datetime-local'}))
     user = forms.CharField(label='', required=False, widget=forms.TextInput(attrs={'style': 'display:none'}))
 
     class Meta:
         model = Task
-        fields = ['title', 'deadline', 'user']
+        fields = ['title', 'user']
 
 
 class UpdateTaskForm(forms.ModelForm):
@@ -17,6 +16,6 @@ class UpdateTaskForm(forms.ModelForm):
 
     class Meta:
         model = Task
-        fields = ['title', 'complete', 'deadline']
+        fields = ['title', 'complete']
 
         

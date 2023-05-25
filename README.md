@@ -52,7 +52,7 @@ To run the development server
 create an app called todo 
 
 ``` 
-python manage.py startapp ```todo```
+python manage.py startapp todo
 ```
 
 

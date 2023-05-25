@@ -64,6 +64,12 @@ python manage.py startapp account
 
 ```
 
+Insatll crispy forms
+
+```
+pip3 install --user django-crispy-forms
+```
+
 This command should be executed in the same directory where the ```manage.py``` file is located, which is the root directory of your Django project.
 
 After running this command, Django will generate a new folder named "todo" with the initial structure of the app

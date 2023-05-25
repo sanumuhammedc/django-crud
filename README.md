@@ -79,6 +79,8 @@ INSTALLED_APPS = [
     # ...
 ]
 
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
 ```
 
 ## Step 3: Create Models

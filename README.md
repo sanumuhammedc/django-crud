@@ -74,8 +74,8 @@ Once you've created the "todo" app, you'll need to include it in your project's 
 
 INSTALLED_APPS = [
     # ...
-    'todo.apps.TodoConfig',
-    'crispy_forms',
+    "todo.apps.TodoConfig",
+    "crispy_forms",
     # ...
 ]
 
@@ -106,7 +106,6 @@ class Task(models.Model):
     title = models.CharField(max_length=200, null=True, blank=True)
     complete = models.BooleanField(default=False)
     created = models.DateTimeField(default=timezone.now().strftime("%Y-%m-%d %H:%M"))
-    deadline = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return self.title
@@ -147,34 +146,32 @@ urlpatterns = [
 Inside the todo app create a ```form.py``` file and paste the below code
 
 ```
-import requests
 from django import forms
 from .models import Task
 
 
 class TaskForm(forms.ModelForm):
     title = forms.CharField(label='', widget=forms.TextInput(attrs={'placeholder': 'Add Task Here...'}))
-    deadline = forms.DateTimeField(required=False, widget=forms.TextInput(attrs={'type': 'datetime-local'}))
     user = forms.CharField(label='', required=False, widget=forms.TextInput(attrs={'style': 'display:none'}))
 
     class Meta:
         model = Task
-        fields = ['title', 'deadline', 'user']
+        fields = ['title', 'user']
 
 
 class UpdateTaskForm(forms.ModelForm):
-    deadline = forms.DateTimeField(required=False, widget=forms.TextInput(attrs={'type': 'datetime-local'}))
-
     class Meta:
         model = Task
-        fields = ['title', 'complete', 'deadline']
-
+        fields = ['title', 'complete']
         
 ```
 
 Add the code given below to ```todo/views.py```
 
 ```
+from django.shortcuts import render
+
+# Create your views here.
 import datetime
 from django.shortcuts import render, redirect
 from .models import Task
@@ -187,14 +184,14 @@ from django.http import QueryDict
 def tasklist(request):
     user = request.user.username
     todos = Task.objects.filter(user=user, complete=False)
-    dones = Task.objects.filter(complete=True)
+    dones = Task.objects.filter(user=user, complete=True)
     now = datetime.datetime.now()
     now = now.strftime("%Y-%m-%d %H:%M")
     print(now)
 
     if request.method == 'POST':
         data = {'csrfmiddlewaretoken': request.POST['csrfmiddlewaretoken'], 'title': request.POST['title'],
-                'deadline': request.POST['deadline'], 'user': request.user.username}
+                'user': request.user.username}
         query_dict = QueryDict('', mutable=True)
         query_dict.update(data)
         form = TaskForm(query_dict)
@@ -277,9 +274,6 @@ Ceate a file called ```index.html``` inside directory ```myapp/todo/templates/to
             {% if todo.deadline > now or todo.deadline is None %}
                 <div class="border p-3 mb-3">
                 <small>Created: {{ todo.created }}</small><br>
-                {% if todo.deadline %}
-                    <small>Deadline: {{ todo.deadline }}</small>
-                {% endif %}
                 <div class="row mt-3">
                     <div class="col-md-8">
                         {% if todo.complete == True %}
@@ -303,23 +297,23 @@ Ceate a file called ```index.html``` inside directory ```myapp/todo/templates/to
 Ceate a file called ```delete.html``` inside directory ```myapp/todo/templates/todo```
 
 ```
-    {% extends 'partials/base.html' %}
-    {% load crispy_forms_tags %}
-    {% block content %}
+   {% extends 'partials/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
 
-        <div class="border p-3 m-3">
-            <h4>Delete Task</h4>
-            <div class="alert alert-danger">
-                <p>Are You Sure Want To Delete</p>
-            </div>
-            <form method="post">
-                {% csrf_token %}
-                <a class="btn btn-secondary" href="{% url 'tasks' %}">Cancel</a>
-                <input class="btn btn-danger" type="submit" value="Confirm">
-            </form>
+    <div class="border p-3 m-3">
+        <h4>Delete Task</h4>
+        <div class="alert alert-danger">
+            <p>Are You Sure Want To Delete</p>
         </div>
+        <form method="post">
+            {% csrf_token %}
+            <a class="btn btn-secondary" href="{% url 'tasks' %}">Cancel</a>
+            <input class="btn btn-danger" type="submit" value="Confirm">
+        </form>
+    </div>
 
-    {% endblock %}
+{% endblock %}
 ```
 
 Ceate a file called ```login.html``` inside directory ```myapp/todo/templates/todo```
@@ -352,7 +346,7 @@ Ceate a file called ```login.html``` inside directory ```myapp/todo/templates/to
       <div class="mb-3">
         <input required class="form-control" type="password" name="password" placeholder="Password">
       </div>
-      <input class="btn btn-primary" type="submit">
+      <input class="btn btn-primary" value="Login" type="submit">
     </form>
 
         <div>
@@ -365,7 +359,6 @@ Ceate a file called ```login.html``` inside directory ```myapp/todo/templates/to
     </div>
 </body>
 </html>
-
 ```
 
 Ceate a file called ```update.html``` inside directory ```myapp/todo/templates/todo```
@@ -412,21 +405,12 @@ Ceate a file called ```register.html``` inside directory ```myapp/todo/templates
             {% csrf_token %}
             <h4 class="mb-3">Sign Up</h4>
               <div class="mb-3">
-                 <input required class="form-control" type="text" name="first_name" placeholder="First Name">
-              </div>
-              <div class="mb-3">
-                <input required class="form-control" type="text" name="last_name" placeholder="Last Name">
-              </div>
-              <div class="mb-3">
                  <input required class="form-control" type="text" name="username" placeholder="User Name">
-              </div>
-              <div class="mb-3">
-                  <input required class="form-control" type="email" name="email" placeholder="Email">
               </div>
               <div class="mb-3">
                   <input required class="form-control" type="password" name="password" placeholder="Password">
               </div>
-            <input class="btn btn-primary" type="submit">
+            <input class="btn btn-primary" value="Sign Up" type="submit">
         </form>
 
         <div>
@@ -440,39 +424,6 @@ Ceate a file called ```register.html``` inside directory ```myapp/todo/templates
     </div>
 </body>
 </html>
-```
-
-Ceate a file called ```aside.html``` inside directory ```myapp/todo/templates/partials```
-
-```
-<div style="margin-top: 5rem !important;" class="border p-3 shadow">
-    <div class="border p-3 mb-2">
-        <h3>Expired tasks</h3>
-        {% for todo in todos %}
-            {% if todo.deadline < now %}
-                <div class="border p-3 mb-3">
-                <small>Created: {{ todo.created }}</small><br>
-                {% if todo.deadline %}
-                    <small>Deadline: {{ todo.deadline }}</small>
-                {% endif %}
-                <div class="row mt-3">
-                    <div class="col-md-8">
-                        {% if todo.complete == True %}
-                            <s><p>{{ todo.title }}</p></s>
-                        {% else %}
-                            <h5>{{ todo.title }}</h5>
-                        {% endif %}
-                    </div>
-                    <div class="col-md-4">
-                        <a class="btn btn-info btn-sm" href="{% url 'update' todo.id %}">Edit</a>
-                        <a class="btn btn-danger btn-sm" href="{% url 'delete' todo.id %}">Delete</a>
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-        {% endfor %}
-    </div>
-</div>
 ```
 
 Ceate a file called ```base.html``` inside directory ```myapp/todo/templates/partials```
@@ -496,18 +447,14 @@ Ceate a file called ```base.html``` inside directory ```myapp/todo/templates/par
     {% if request.user.is_authenticated %}
         <div class="container">
             <div class="row">
-                <div class="col-md-3">
-                    {% include 'partials/aside.html' %}
-                </div>
-
-                <div class="col-md-6 mt-5">
+                <div class="col-md-8 mt-5">
                     <h4 class="mt-5">Hello {{ user.username }}!</h4>
                     {% block content %}
 
                     {% endblock %}
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-4">
                     {% include 'partials/beside.html' %}
                 </div>
 
@@ -534,14 +481,13 @@ Ceate a file called ```beside.html``` inside directory ```myapp/todo/templates/p
         {% for done in dones %}
         <div class="border p-3 mb-3">
             <small>Created: {{ done.created }}</small><br>
-            {% if todo.deadline %}
-                <small>Deadline: {{ done.deadline }}</small>
-            {% endif %}
             <div class="row mt-3">
                 <div class="col-md-8">
                     {% if done.complete == True %}
                         <s><p>{{ done.title }}</p></s>
-                    {% else %}
+                    {% else %}            {% if todo.deadline %}
+                    <small>Deadline: {{ done.deadline }}</small>
+                {% endif %}
                         <h5>{{ done.title }}</h5>
                     {% endif %}
                 </div>
@@ -559,23 +505,23 @@ Ceate a file called ```beside.html``` inside directory ```myapp/todo/templates/p
 Ceate a file called ```navbar.html``` inside directory ```myapp/todo/templates/partials```
 
 ```
-<nav class="navbar navbar-expand-lg navbar-info bg-info position-fixed w-100">
-  <div class="container">
-    <a class="navbar-brand text-white" href="{% url 'tasks' %}">Task Manager</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        {% if request.user.is_authenticated %}
-            <li class="nav-item">
-              <a class="btn btn-danger" href='accounts/logout/'>Logout</a>
-            </li>
-        {% endif %}
-      </ul>
-    </div>
-  </div>
-</nav>
+  <nav class="navbar navbar-expand-lg navbar-info bg-info position-fixed w-100">
+      <div class="container">
+        <a class="navbar-brand text-white" href="{% url 'tasks' %}">Task Manager</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            {% if request.user.is_authenticated %}
+                <li class="nav-item">
+                  <a class="btn btn-danger" href='accounts/logout/'>Logout</a>
+                </li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
 ```
 
 ## Step 7: Adding login and logout functionality
@@ -625,21 +571,14 @@ def login(request):
 
 def register(request):
     if request.method == 'POST':
-        first_name = request.POST['first_name']
-        last_name = request.POST['last_name']
         username = request.POST['username']
         password = request.POST['password']
-        email = request.POST['email']
 
         if User.objects.filter(username=username).exists():
             messages.info(request, 'Username Already Exist')
             return redirect('register')
-        elif User.objects.filter(email=email).exists():
-            messages.info(request, 'Email Already Exist')
-            return redirect('register')
         else:
-            user = User.objects.create_user(username=username, password=password,
-                                            email=email, first_name=first_name, last_name=last_name)
+            user = User.objects.create_user(username=username, password=password)
             user.save()
             return redirect('login')
 
